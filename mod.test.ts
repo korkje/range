@@ -1,6 +1,13 @@
 import { assert, assertThrows } from "@std/assert";
 import range from "./mod.ts";
 
+Deno.test("reusable", () => {
+    const r = range(5);
+
+    assert([...r].length === 5);
+    assert([...r].length === 5);
+});
+
 Deno.test("range(_)", async test => {
     await test.step("range(5)", () => {
         const expected = [0, 1, 2, 3, 4];

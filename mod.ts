@@ -5,7 +5,7 @@ type RangeParams =
 /**
  * Creates an iterable range of numbers.
  */
-export function* range(...params: RangeParams): Iterable<number> {
+export function range(...params: RangeParams): Iterable<number> {
     const [start, end] = params.length === 1
         ? [0, params[0]]
         : params;
@@ -21,12 +21,16 @@ export function* range(...params: RangeParams): Iterable<number> {
     const asc = start < end;
 
     if (asc && step < 0 || !asc && step > 0) {
-        return;
+        return [];
     }
 
-    for (let i = start; asc ? i < end : i > end; i += step) {
-        yield i;
-    }
+    return {
+        *[Symbol.iterator](): Generator<number> {
+            for (let i = start; asc ? i < end : i > end; i += step) {
+                yield i;
+            }
+        }
+    };
 }
 
 export default range;
