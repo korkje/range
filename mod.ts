@@ -25,10 +25,27 @@ export function range(...params: RangeParams): Iterable<number> {
     }
 
     return {
-        *[Symbol.iterator](): Generator<number> {
-            for (let i = start; asc ? i < end : i > end; i += step) {
-                yield i;
-            }
+        [Symbol.iterator](): Iterator<number> {
+            let i = start;
+
+            return {
+                next() {
+                    if (asc ? i < end : i > end) {
+                        const value = i;
+                        i += step;
+
+                        return {
+                            done: false,
+                            value,
+                        };
+                    }
+
+                    return {
+                        done: true,
+                        value: undefined,
+                    };
+                }
+            };
         }
     };
 }
