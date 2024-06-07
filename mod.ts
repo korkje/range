@@ -10,10 +10,10 @@ export type RangeParams =
  * Iterable representing a range of numbers.
  */
 export class Range implements Iterable<number> {
-    private start: number;
-    private end: number;
-    private step: number;
-    private name: string;
+    #start: number;
+    #end: number;
+    #step: number;
+    #name: string;
 
     constructor(...params: RangeParams) {
         const [start, end] = params.length === 1
@@ -26,23 +26,26 @@ export class Range implements Iterable<number> {
             throw new Error("'step' argument must not be zero.");
         }
 
-        this.start = start;
-        this.end = end;
-        this.step = step;
-        this.name = step === 1
+        this.#start = start;
+        this.#end = end;
+        this.#step = step;
+        this.#name = step === 1
             ? `range(${start}, ${end})`
             : `range(${start}, ${end}, ${step})`;
 
         const asc = start < end;
         if (asc && step < 0 || !asc && step > 0) {
-            this.start = this.end = 0;
+            this.#start = this.#end = 0;
         }
     }
 
     [Symbol.iterator](): Iterator<number> {
-        const { start, end, step } = this;
+        const start = this.#start;
+        const end = this.#end;
+        const step = this.#step;
+
         const asc = start < end;
-        let i = start;
+        let i = this.#start;
 
         return {
             next() {
@@ -65,7 +68,7 @@ export class Range implements Iterable<number> {
     }
 
     get [Symbol.toStringTag](): string {
-        return this.name;
+        return this.#name;
     }
 }
 
