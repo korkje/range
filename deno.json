@@ -1,16 +1,16 @@
 {
     "name": "@korkje/range",
     "version": "0.0.0",
+    "lock": false,
     "exports": "./mod.ts",
+    "imports": {
+        "@std/assert": "jsr:@std/assert@^0.225.3"
+    },
     "publish": {
         "include": [
             "mod.ts",
             "license.md",
             "readme.md"
         ]
-    },
-    "lock": false,
-    "imports": {
-        "@std/assert": "jsr:@std/assert@^0.225.3"
     }
 }

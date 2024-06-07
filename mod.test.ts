@@ -109,7 +109,7 @@ Deno.test("range(_, _, _)", async test => {
 
     await test.step("range(1, 5, undefined)", () => {
         const expected = [1, 2, 3, 4];
-        const actual = [...range(1, 5, undefined)];
+        const actual = [...range(1, 5)];
 
         assert(actual.length === expected.length);
 

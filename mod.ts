@@ -1,53 +1,77 @@
-type RangeParams =
-    [end: number] |
-    [start: number, end: number, step?: number];
+/**
+ * Range parameters.
+ */
+export type RangeParams =
+    | [end: number]
+    | [start: number, end: number]
+    | [start: number, end: number, step: number];
 
 /**
- * Creates an iterable range of numbers.
+ * Iterable representing a range of numbers.
  */
-export function range(...params: RangeParams): Iterable<number> {
-    const [start, end] = params.length === 1
+export class Range implements Iterable<number> {
+    private start: number;
+    private end: number;
+    private step: number;
+    private name: string;
+
+    constructor(...params: RangeParams) {
+        const [start, end] = params.length === 1
         ? [0, params[0]]
         : params;
 
-    const step = params.length === 3
-        ? params[2] ?? 1
-        : 1;
+        const step = params[2] ?? 1;
 
-    if (step === 0) {
-        throw new Error("'step' argument must not be zero.");
+        if (step === 0) {
+            throw new Error("'step' argument must not be zero.");
+        }
+
+        this.start = start;
+        this.end = end;
+        this.step = step;
+        this.name = step === 1
+            ? `range(${start}, ${end})`
+            : `range(${start}, ${end}, ${step})`;
+
+        const asc = start < end;
+        if (asc && step < 0 || !asc && step > 0) {
+            this.start = this.end = 0;
+        }
     }
 
-    const asc = start < end;
+    [Symbol.iterator](): Iterator<number> {
+        const { start, end, step } = this;
+        const asc = start < end;
+        let i = start;
 
-    if (asc && step < 0 || !asc && step > 0) {
-        return [];
-    }
-
-    return {
-        [Symbol.iterator](): Iterator<number> {
-            let i = start;
-
-            return {
-                next() {
-                    if (asc ? i < end : i > end) {
-                        const value = i;
-                        i += step;
-
-                        return {
-                            done: false,
-                            value,
-                        };
-                    }
+        return {
+            next() {
+                if (asc ? i < end : i > end) {
+                    const value = i;
+                    i += step;
 
                     return {
-                        done: true,
-                        value: undefined,
+                        done: false,
+                        value,
                     };
                 }
-            };
-        }
-    };
+
+                return {
+                    done: true,
+                    value: undefined,
+                };
+            }
+        };
+    }
+
+    get [Symbol.toStringTag](): string {
+        return this.name;
+    }
 }
+
+/**
+ * Creates a new Range instance.
+ */
+export const range = (...params: RangeParams): Range => new Range(...params);
 
 export default range;
